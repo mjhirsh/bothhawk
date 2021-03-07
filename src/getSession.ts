@@ -21,7 +21,7 @@ const options = {
 
 const sslAgent = new https.Agent(options)
 
-const makeRequest = async (): Promise<void> => {
+const getSession = async (): Promise<string> => {
   try {
     const response = await fetch(url, {
       method: 'POST',
@@ -31,10 +31,10 @@ const makeRequest = async (): Promise<void> => {
     })
 
     const responseBody = await response.json()
-    console.log(responseBody)
+    return responseBody
   } catch (err) {
     console.log(err)
   }
 }
 
-makeRequest()
+export default getSession
