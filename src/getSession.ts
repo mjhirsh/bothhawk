@@ -15,8 +15,8 @@ const headers = {
 }
 
 const options = {
-  key: fs.readFileSync('../client-2048.key'),
-  cert: fs.readFileSync('../client-2048.crt'),
+  key: fs.readFileSync('../secrets/client-2048.key'),
+  cert: fs.readFileSync('../secrets/client-2048.crt'),
 }
 
 const sslAgent = new https.Agent(options)
