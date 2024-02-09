@@ -1,6 +1,13 @@
 import https from 'https'
 import fs from 'fs'
 import fetch from 'node-fetch'
+import {
+  bfAppKey,
+  bfCertPath,
+  bfKeyPath,
+  bfPassword,
+  bfUsername,
+} from './env_vars'
 
 export class BotHawkRequest {
   private readonly headers: { [key: string]: string }
@@ -9,12 +16,12 @@ export class BotHawkRequest {
   constructor(private readonly session: string = '') {
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'X-Application': process.env.BF_APP_KEY,
+      'X-Application': bfAppKey,
     }
 
     this.agent = new https.Agent({
-      key: fs.readFileSync(process.env.BF_KEY_PATH),
-      cert: fs.readFileSync(process.env.BF_CERT_PATH),
+      key: fs.readFileSync(bfKeyPath),
+      cert: fs.readFileSync(bfCertPath),
     })
   }
 
@@ -33,7 +40,7 @@ export class BotHawkRequest {
   }
 
   async withSession(): Promise<BotHawkRequest> {
-    const data = `username=${process.env.username}&password=${process.env.password}`
+    const data = `username=${bfUsername}&password=${bfPassword}`
     const sessionUrl = 'https://identitysso-cert.betfair.com/api/certlogin'
     const session = await this.request(sessionUrl, data)
 
