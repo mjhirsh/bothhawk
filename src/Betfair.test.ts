@@ -1,12 +1,14 @@
 import { Betfair } from './Betfair'
 
-test('withSession', async () => {
-  const request = await new Betfair().withSession()
-  expect(request).toBeTruthy()
-})
+describe('Betfair', () => {
+  let betfair: Betfair
+  beforeAll(async () => {
+    betfair = await new Betfair().withSession()
+  })
 
-test('listMarketBook', async () => {
-  const betfair = await new Betfair().withSession()
-  const value = betfair.listMarketBook()
-  expect(value).toBeTruthy()
+  test('listMarketCatalogue', async () => {
+    const value = await betfair.listMarketCatalogue()
+    expect(value).toBeTruthy()
+    expect(value).toHaveProperty('result')
+  })
 })
