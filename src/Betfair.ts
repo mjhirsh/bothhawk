@@ -1,7 +1,7 @@
 import https from 'https'
 import fetch from 'node-fetch'
 import { bfAppKey, bfCert, bfKey, bfPassword, bfUsername } from './variables'
-import { MarketCatalogue } from './BetfairTypes'
+import { BettingEndpoint, BettingParams, BettingResponse } from './BetfairTypes'
 
 const agent = new https.Agent({
   key: bfKey,
@@ -22,6 +22,7 @@ export class Betfair {
       })
 
       const result = await response.json()
+      if (result.error) console.log(result)
       if (result.error) throw new Error(result.error.message)
       return result
     } catch (err) {
@@ -29,21 +30,15 @@ export class Betfair {
     }
   }
 
-  async listMarketCatalogue(): Promise<{ result: MarketCatalogue }> {
+  async bettingRequest(
+    endpoint: BettingEndpoint,
+    params: BettingParams
+  ): Promise<BettingResponse> {
     const url = `https://api.betfair.com/exchange/betting/json-rpc/v1/`
     const body = {
       jsonrpc: 2.0,
-      method: 'SportsAPING/v1.0/listMarketCatalogue',
-      params: {
-        filter: { eventTypeIds: [7] },
-        maxResults: 10,
-        marketProjection: [
-          'EVENT_TYPE',
-          'MARKET_DESCRIPTION',
-          'RUNNER_DESCRIPTION',
-          'RUNNER_METADATA',
-        ],
-      },
+      method: `SportsAPING/v1.0/${endpoint}`,
+      params,
     }
     return await this.request(url, JSON.stringify(body))
   }
