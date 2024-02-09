@@ -1,8 +1,8 @@
 import { Adapter } from './Adapter'
-import { BotHawkRequest } from './BotHawkRequest'
+import { Betfair } from './Betfair'
 
 test('basic', async () => {
-  const request = await new BotHawkRequest().withSession()
+  const request = await new Betfair().withSession()
   const a = await new Adapter(request)
   const value = a.getSomething()
   expect(value).toBeTruthy()

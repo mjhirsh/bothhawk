@@ -1,7 +1,7 @@
-import { BotHawkRequest } from './BotHawkRequest'
+import { Betfair } from './Betfair'
 
 export class Adapter {
-  constructor(private request: BotHawkRequest) {}
+  constructor(private request: Betfair) {}
 
   async getSomething(): Promise<any> {
     return await this.request.request(
