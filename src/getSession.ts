@@ -1,13 +1,6 @@
 import https from 'https'
-import fs from 'fs'
 import fetch from 'node-fetch'
-import {
-  bfAppKey,
-  bfCertPath,
-  bfKeyPath,
-  bfPassword,
-  bfUsername,
-} from './env_vars'
+import { bfAppKey, bfCert, bfKey, bfPassword, bfUsername } from './variables'
 
 const url = 'https://identitysso-cert.betfair.com/api/certlogin'
 
@@ -18,8 +11,8 @@ const headers = {
 }
 
 const options = {
-  key: fs.readFileSync(bfKeyPath),
-  cert: fs.readFileSync(bfCertPath),
+  key: bfKey,
+  cert: bfCert,
 }
 
 const sslAgent = new https.Agent(options)
