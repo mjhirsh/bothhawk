@@ -9,12 +9,12 @@ export class BotHawkRequest {
   constructor(private readonly session: string = '') {
     this.headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'X-Application': process.env.APPKEY,
+      'X-Application': process.env.BF_APP_KEY,
     }
 
     this.agent = new https.Agent({
-      key: fs.readFileSync(process.env.KEY_PATH),
-      cert: fs.readFileSync(process.env.CERT_PATH),
+      key: fs.readFileSync(process.env.BF_KEY_PATH),
+      cert: fs.readFileSync(process.env.BF_CERT_PATH),
     })
   }
 

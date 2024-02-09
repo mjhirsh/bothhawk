@@ -4,9 +4,9 @@ import fetch from 'node-fetch'
 
 const url = 'https://identitysso-cert.betfair.com/api/certlogin'
 
-const username = process.env.USER
-const password = process.env.PASSWORD
-const appKey = process.env.APPKEY
+const username = process.env.BF_USERNAME
+const password = process.env.BF_PASSWORD
+const appKey = process.env.BF_APP_KEY
 
 const data = `username=${username}&password=${password}`
 const headers = {
@@ -15,8 +15,8 @@ const headers = {
 }
 
 const options = {
-  key: fs.readFileSync('../secrets/client-2048.key'),
-  cert: fs.readFileSync('../secrets/client-2048.crt'),
+  key: fs.readFileSync('./secrets/client-2048.key'),
+  cert: fs.readFileSync('./secrets/client-2048.crt'),
 }
 
 const sslAgent = new https.Agent(options)
