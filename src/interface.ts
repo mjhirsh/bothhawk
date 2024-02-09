@@ -1,11 +1,9 @@
-import { Adapter } from './Adapter'
 import { Betfair } from './Betfair'
 
 const makeAdapter = async () => {
-  const request = await new Betfair().withSession()
-  const a = await new Adapter(request)
+  const betfair = await new Betfair().withSession()
 
-  const res = a.getSomething()
+  const res = betfair.listMarketBook()
   console.log('=================', res)
 }
 

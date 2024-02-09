@@ -28,6 +28,12 @@ export class Betfair {
       console.log(err)
     }
   }
+  async listMarketBook() {
+    return await this.request(
+      'https://api.betfair.com/exchange/betting/rest/v1.0/listMarketBook',
+      ''
+    )
+  }
 
   async withSession(): Promise<Betfair> {
     const data = `username=${bfUsername}&password=${bfPassword}`
