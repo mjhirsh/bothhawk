@@ -11,14 +11,14 @@ const agent = new https.Agent({
 export class Betfair {
   constructor(private session: string = '') {}
 
-  async request(url: string, data: any): Promise<any> {
+  async request<T>(url: string, body: any): Promise<undefined | T> {
     const headers = this.headers()
     try {
       const response = await fetch(url, {
         method: 'POST',
         headers,
         agent,
-        body: data,
+        body,
       })
 
       const result = await response.json()
@@ -40,13 +40,19 @@ export class Betfair {
       method: `SportsAPING/v1.0/${endpoint}`,
       params,
     }
-    return await this.request(url, JSON.stringify(body))
+    return await this.request<Promise<BettingResponse>>(
+      url,
+      JSON.stringify(body)
+    )
   }
 
   async withSession(): Promise<Betfair> {
     const data = `username=${bfUsername}&password=${bfPassword}`
     const sessionUrl = 'https://identitysso-cert.Betfair.com/api/certlogin'
-    const session = await this.request(sessionUrl, data)
+    const session = await this.request<Promise<{ sessionToken: string }>>(
+      sessionUrl,
+      data
+    )
     return new Betfair(session.sessionToken)
   }
 
