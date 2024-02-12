@@ -1,5 +1,6 @@
 import https from 'https'
 import fetch from 'node-fetch'
+import tls from 'tls'
 import { bfAppKey, bfCert, bfKey, bfPassword, bfUsername } from './variables'
 import { BettingEndpoint, BettingParams, BettingResponse } from './BetfairTypes'
 
@@ -9,7 +10,49 @@ const agent = new https.Agent({
 })
 
 export class Betfair {
-  constructor(private session: string = '') {}
+  constructor(private session: string = '', private client: any = 0) {}
+
+  connect() {
+    /*	Socket connection options */
+    const options = {
+      host: 'stream-api.betfair.com',
+      port: 443,
+    }
+
+    /*	Establish connection to the socket */
+
+    this.client = tls.connect(options, function () {
+      console.log('Connected')
+    })
+
+    this.client.on('data', function (data: any) {
+      console.log('Received: ' + data)
+    })
+
+    this.client.on('close', function () {
+      console.log('Connection closed')
+    })
+
+    this.client.on('error', function (err: any) {
+      console.log('Error:' + err)
+    })
+  }
+
+  authenticate() {
+    /*	Send authentication message */
+    const message = {
+      op: 'authentication',
+      id: 1,
+      appKey: bfAppKey,
+      session: this.session,
+    }
+    const json = JSON.stringify(message)
+    this.client.write(`${json}\r\n`)
+  }
+
+  async subscribe() {
+    this.client.write('{"op":"orderSubscription", "id": "2"}\r\n')
+  }
 
   async request<T>(url: string, body: any): Promise<undefined | T> {
     const headers = this.headers()

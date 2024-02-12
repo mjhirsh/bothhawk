@@ -2,7 +2,7 @@
   "name": "bothawk",
   "version": "1.0.0",
   "description": "",
-  "main": "getSession.js",
+  "main": "interface.js",
   "scripts": {
     "test": "jest",
     "lint": "eslint 'src/**/*.ts'"
