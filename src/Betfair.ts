@@ -1,77 +1,11 @@
 import https from 'https'
 import fetch from 'node-fetch'
-import tls from 'tls'
 import { bfAppKey, bfCert, bfKey, bfPassword, bfUsername } from './variables'
 import { BettingEndpoint, BettingParams, BettingResponse } from './BetfairTypes'
-
-const agent = new https.Agent({
-  key: bfKey,
-  cert: bfCert,
-})
+import { BetfairStream } from './BetfairStream'
 
 export class Betfair {
-  constructor(private session: string = '', private client: any = 0) {}
-
-  connect() {
-    /*	Socket connection options */
-    const options = {
-      host: 'stream-api.betfair.com',
-      port: 443,
-    }
-
-    /*	Establish connection to the socket */
-
-    this.client = tls.connect(options, function () {
-      console.log('Connected')
-    })
-
-    this.client.on('data', function (data: any) {
-      console.log('Received: ' + data)
-    })
-
-    this.client.on('close', function () {
-      console.log('Connection closed')
-    })
-
-    this.client.on('error', function (err: any) {
-      console.log('Error:' + err)
-    })
-  }
-
-  authenticate() {
-    /*	Send authentication message */
-    const message = {
-      op: 'authentication',
-      id: 1,
-      appKey: bfAppKey,
-      session: this.session,
-    }
-    const json = JSON.stringify(message)
-    this.client.write(`${json}\r\n`)
-  }
-
-  async subscribe() {
-    this.client.write('{"op":"orderSubscription", "id": "2"}\r\n')
-  }
-
-  async request<T>(url: string, body: any): Promise<undefined | T> {
-    const headers = this.headers()
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers,
-        agent,
-        body,
-      })
-
-      const result = await response.json()
-      if (result.error) console.log(result)
-      if (result.error) throw new Error(result.error.message)
-      return result
-    } catch (err) {
-      console.log(err)
-    }
-  }
+  constructor(private readonly session: string = '', private client: any = 0) {}
 
   async bettingRequest(
     endpoint: BettingEndpoint,
@@ -99,7 +33,11 @@ export class Betfair {
     return new Betfair(session.sessionToken)
   }
 
-  headers(): {
+  createStream() {
+    return new BetfairStream(this.session, bfAppKey)
+  }
+
+  private headers(): {
     'Content-Type': 'application/x-www-form-urlencoded'
     'X-Application': string
     'X-Authentication': string
@@ -109,5 +47,30 @@ export class Betfair {
       'X-Application': bfAppKey,
       'X-Authentication': this.session,
     }
+  }
+
+  private async request<T>(url: string, body: any): Promise<undefined | T> {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: this.headers(),
+        agent: this.agent(),
+        body,
+      })
+
+      const result = await response.json()
+      if (result.error) console.log(result)
+      if (result.error) throw new Error(result.error.message)
+      return result
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  private agent(): https.Agent {
+    return new https.Agent({
+      key: bfKey,
+      cert: bfCert,
+    })
   }
 }

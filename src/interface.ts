@@ -2,13 +2,14 @@ import { Betfair } from './Betfair'
 
 const makeAdapter = async () => {
   const betfair = await new Betfair().withSession()
-  betfair.connect()
+  const stream = betfair.createStream()
+  stream.connect()
 
   setTimeout(() => {
-    betfair.authenticate()
+    stream.authenticate()
   }, 3000)
   setTimeout(() => {
-    betfair.subscribe()
+    stream.subscribe()
   }, 3000)
 
   // const res = betfair.bettingRequest(BettingEndpoint.listMarketCatalogue, {})
